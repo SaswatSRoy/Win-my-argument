@@ -1,4 +1,6 @@
-📌 Win My Argument - AI-Powered Debate Assistant ![Win my argument-modified](https://github.com/user-attachments/assets/37f18fd6-ae9c-4588-b39c-ba33285f6357)
+ ![Win my argument-modified](https://github.com/user-attachments/assets/37f18fd6-ae9c-4588-b39c-ba33285f6357)
+
+📌 Win My Argument - AI-Powered Debate Assistant
 📝 Overview
 Win My Argument is an AI-powered debate assistant that helps users find structured, research-backed arguments in real time. Whether you're debating with friends or preparing for a discussion, this app provides fact-based, winnable responses with ease.
 
