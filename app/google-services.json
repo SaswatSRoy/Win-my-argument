@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "71606747987",
+    "project_id": "win-my-argument-8a781",
+    "storage_bucket": "win-my-argument-8a781.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:71606747987:android:39e7e41f7544e0def197a6",
+        "android_client_info": {
+          "package_name": "android.saswat.winmyargument"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "71606747987-puosiqb2fu8fufvhknb7kvhfoupapesc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "android.saswat.winmyargument",
+            "certificate_hash": "275a43b679f838ac4a792c7373f5609ab94be2e0"
+          }
+        },
+        {
+          "client_id": "71606747987-qgo2jhc150jjn5r5gbbihc7j2hnrnv3d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6AF-Pw9NUeN-t8Ju0445lozylOSE4N-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "71606747987-qgo2jhc150jjn5r5gbbihc7j2hnrnv3d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
