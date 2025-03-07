@@ -35,19 +35,19 @@ Win My Argument is an AI-powered debate assistant that helps users find structur
  ┗ 📜 build.gradle
 ```
 ## 🛠️ Setup & Installation
-  🔹 Prerequisites
-👉 Android Studio (Latest Version)
-👉 Firebase Project Setup (Guide)
-Google Services JSON (Place in app/ directory)
-🔹 Steps to Run the Project
-1️⃣ Clone the Repository
+- Prerequisites
+  - 👉 Android Studio (Latest Version)
+  - 👉 Firebase Project Setup (Guide)
+- Google Services JSON (Place in app/ directory)
+  - 🔹 Steps to Run the Project
+  - 1️⃣ Clone the Repository
  
 
 ```bash
 git clone https://github.com/your-username/WinMyArgument.git
 cd WinMyArgument
 ```
-2️⃣ Open in Android Studio
+  - 2️⃣ Open in Android Studio
 
 Open the project in Android Studio
 Sync Gradle & install dependencies
