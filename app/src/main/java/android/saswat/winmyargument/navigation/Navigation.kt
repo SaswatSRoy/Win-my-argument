@@ -6,6 +6,7 @@ import android.saswat.winmyargument.ui.Screens
 import android.saswat.winmyargument.ui.about.AboutScreen
 import android.saswat.winmyargument.ui.about.HowScreen
 import android.saswat.winmyargument.ui.about.WhyScreen
+import android.saswat.winmyargument.ui.mainScreen.MainScreen
 import android.saswat.winmyargument.ui.signInUp.SignInScreen
 import android.saswat.winmyargument.ui.signInUp.SignUpScreen
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -169,8 +170,13 @@ fun Navigation(
         ) {
             SignInScreen(
                 onNavigateToMain = {
-                    {
-
+                    navController.navigate(Screens.MainScreen.route) {
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState = false
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                        restoreState = false
                     }
                 },
                 navController = navController,
@@ -210,16 +216,57 @@ fun Navigation(
             }
         ) {
             SignUpScreen(
-                onNavigateToMain = {
-                    {
-                    }
-                },
                 navController = navController,
                 onSignInClick = {
                     navController.navigate(Screens.SignIn.route) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateToMain = { success ->
+                    if (success) {
+                        navController.navigate(Screens.MainScreen.route) {
+                            // Clear the navigation stack to prevent going back to the sign-up flow
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = false
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                            restoreState = false
+                        }
+                    }
                 }
+            )
+        }
+        
+        composable(
+            route = Screens.MainScreen.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    animationSpec = tween(300)
+                )
+            },
+            popEnterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            },
+            popExitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    animationSpec = tween(300)
+                )
+            }
+        ) {
+            MainScreen(
+                navigationController = navController
             )
         }
     }

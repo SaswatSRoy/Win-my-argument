@@ -7,6 +7,31 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AuthViewModel: ViewModel() {
+    /**
+     * private val auth=FirebaseAuth.getInstance()
+     * private val db = FirebaseFirestore.getInstance()
+     *
+     * private val _authState=MutableStateFlow<AuthState>(AuthState.Initial)
+     * val authstate=_authState.asStateFlow()
+     *
+     * private val _currentUser = MutableStateFlow<User?>(null)
+     * val currentUser=_currentUser.asStateFlow()
+     *
+     * init{
+     *  _authState.value=AuthState.Initial
+     *
+     *  val currentUser=auth.currentUser
+     *      if(currentUser != null) {
+     *          _currentUser.value = User(id = currentUser.uid, name = currentUser.displayName ?: "", email = currentUser.email ?: "")
+     *      }
+     * }
+     *
+     *
+     * */
+
+
+
+
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     
@@ -17,11 +42,13 @@ class AuthViewModel: ViewModel() {
     val currentUser = _currentUser.asStateFlow()
     
     init {
-        // Check if user is already signed in
+        // We'll set the initial state but not attempt auto sign-in
+        _authState.value = AuthState.Initial
+        
+        // Store the current user if available, but don't change auth state
         val currentUser = auth.currentUser
         if (currentUser != null) {
-            _authState.value = AuthState.SignedIn
-            fetchUserData(currentUser.uid)
+            _currentUser.value = User(id = currentUser.uid, name = currentUser.displayName ?: "", email = currentUser.email ?: "")
         }
     }
     
@@ -74,6 +101,11 @@ class AuthViewModel: ViewModel() {
         _authState.value = AuthState.SignedOut
     }
     
+    
+    /**
+    * Checks if the current user exists in Firestore
+    * @param callback A function that will be called with a boolean indicating if the user exists
+    */
     fun checkUserExists(callback: (Boolean) -> Unit) {
         val userId = auth.currentUser?.uid
         if (userId == null) {
@@ -83,8 +115,8 @@ class AuthViewModel: ViewModel() {
         
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
-                // User exists if the document exists and has data
-                callback(document != null && document.exists())
+                val exists = document != null && document.exists() && !document.data.isNullOrEmpty()
+                callback(exists)
             }
             .addOnFailureListener {
                 // In case of failure, assume user doesn't exist
@@ -109,15 +141,30 @@ class AuthViewModel: ViewModel() {
             }
     }
     
+    fun checkCurrentSession() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            fetchUserData(currentUser.uid)
+        } else {
+            _authState.value = AuthState.Initial
+        }
+    }
+    
     private fun fetchUserData(userId: String) {
+        // First set loading state
+        _authState.value = AuthState.Loading
+        
         db.collection("users").document(userId).get()
             .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
+                if (document != null && document.exists() && !document.data.isNullOrEmpty()) {
                     val user = document.toObject(User::class.java)
                     _currentUser.value = user
                     _authState.value = AuthState.SignedIn
                 } else {
-                    _authState.value = AuthState.Error("User data not found")
+                    // User document doesn't exist in Firestore
+                    _authState.value = AuthState.UserNotFound
+                    // Sign out the user since their data is missing
+                    auth.signOut()
                 }
             }
             .addOnFailureListener { exception ->
@@ -143,6 +190,7 @@ class AuthViewModel: ViewModel() {
         object SignedIn : AuthState()
         object SignedOut : AuthState()
         object PasswordResetSent : AuthState()
+        object UserNotFound : AuthState()
         data class Error(val message: String) : AuthState()
     }
     

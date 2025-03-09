@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import android.saswat.winmyargument.R
+import android.saswat.winmyargument.ui.Screens
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,9 +36,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun SignUpScreen(
     onSignInClick: () -> Unit = {},
-    onNavigateToMain: () -> Unit = {},
     navController: NavController,
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(),
+    onNavigateToMain: (Boolean) -> Unit,
 ) {
 
     val backgroundColor = Color(0xFFC2B280)
@@ -54,31 +55,42 @@ fun SignUpScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val authState = authViewModel.authState.collectAsState()
 
+    // Track if the user has attempted to sign up
+    var hasAttemptedSignUp by remember { mutableStateOf(false) }
+
     LaunchedEffect(authState.value) {
-        when (val state = authState.value) {
-            is AuthViewModel.AuthState.SignedIn -> {
-                authViewModel.checkUserExists { userExists ->
+        // Only process auth states if user has attempted sign up
+        if (hasAttemptedSignUp) {
+            when (val state = authState.value) {
+                is AuthViewModel.AuthState.SignedIn -> {
                     Toast.makeText(
                         navController.context,
                         "Account created successfully!",
                         Toast.LENGTH_SHORT
                     ).show()
-                    onNavigateToMain()
+                    onNavigateToMain(true)
                 }
-            }
-            is AuthViewModel.AuthState.Error -> {
-                // Show error in toast instead of snackbar for better visibility
-                Toast.makeText(
-                    navController.context,
-                    state.message,
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-            is AuthViewModel.AuthState.Initial,
-            is AuthViewModel.AuthState.SignedOut,
-            is AuthViewModel.AuthState.Loading,
-            is AuthViewModel.AuthState.PasswordResetSent -> {
-                // Don't navigate automatically for these states
+                is AuthViewModel.AuthState.UserNotFound -> {
+                    Toast.makeText(
+                        navController.context,
+                        "Account verification failed",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                is AuthViewModel.AuthState.Error -> {
+                    // Show error in toast instead of snackbar for better visibility
+                    Toast.makeText(
+                        navController.context,
+                        state.message,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                is AuthViewModel.AuthState.Initial,
+                is AuthViewModel.AuthState.SignedOut,
+                is AuthViewModel.AuthState.Loading,
+                is AuthViewModel.AuthState.PasswordResetSent -> {
+                    // Don't navigate automatically for these states
+                }
             }
         }
     }
@@ -230,6 +242,7 @@ fun SignUpScreen(
             Button(
                 onClick = {
                     if (password == confirmPassword) {
+                        hasAttemptedSignUp = true
                         authViewModel.signUp(email, password, name)
                     } else {
                         MainScope().launch {
@@ -244,7 +257,7 @@ fun SignUpScreen(
                 colors = ButtonDefaults.buttonColors(containerColor = buttonColor),
                 shape = RoundedCornerShape(28.dp)
             ) {
-                if (authState.value is AuthViewModel.AuthState.Loading) {
+                if (hasAttemptedSignUp && authState.value is AuthViewModel.AuthState.Loading) {
                     CircularProgressIndicator(
                         modifier = Modifier.size(24.dp),
                         color = Color.White
@@ -332,7 +345,8 @@ fun SignUpScreen(
 @Preview
 @Composable
 fun PreviewSignIn() {
-    SignUpScreen(navController = rememberNavController())
-
-
+    SignUpScreen(
+        navController = rememberNavController(),
+        onNavigateToMain = { _ -> }
+    )
 }
