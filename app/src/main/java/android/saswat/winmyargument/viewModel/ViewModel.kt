@@ -7,27 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class AuthViewModel: ViewModel() {
-    /**
-     * private val auth=FirebaseAuth.getInstance()
-     * private val db = FirebaseFirestore.getInstance()
-     *
-     * private val _authState=MutableStateFlow<AuthState>(AuthState.Initial)
-     * val authstate=_authState.asStateFlow()
-     *
-     * private val _currentUser = MutableStateFlow<User?>(null)
-     * val currentUser=_currentUser.asStateFlow()
-     *
-     * init{
-     *  _authState.value=AuthState.Initial
-     *
-     *  val currentUser=auth.currentUser
-     *      if(currentUser != null) {
-     *          _currentUser.value = User(id = currentUser.uid, name = currentUser.displayName ?: "", email = currentUser.email ?: "")
-     *      }
-     * }
-     *
-     *
-     * */
+
 
 
 
